@@ -16,6 +16,8 @@ var session := Session.new(GRID)
 var meshes := {}  # kit piece name -> Mesh, shared by everything that shows it (Flyweight)
 var segments: Array[MeshInstance3D] = []
 var camera := Camera3D.new()
+var food_node := MeshInstance3D.new()
+var score_label := Label.new()
 var _clock := 0.0
 
 
@@ -23,6 +25,11 @@ func _ready() -> void:
 	meshes = Stage.load_kit()
 	_build_stage()
 	_draw_dragon()
+	food_node.mesh = meshes["food"]
+	add_child(food_node)
+	score_label.position = Vector2(16, 12)
+	add_child(score_label)
+	_draw_food()
 
 
 ## Input arrives as events, so even a tap shorter than one frame is never missed.
@@ -38,7 +45,13 @@ func _process(delta: float) -> void:
 		_clock -= TICK_SECONDS
 		session.tick()
 		_draw_dragon()
+		_draw_food()
 	_follow(delta)
+
+
+func _draw_food() -> void:
+	food_node.position = _center(session.food)
+	score_label.text = "Score: %d" % session.score
 
 
 ## Sky, light, and tiles live in app/stage.gd; the camera follows the head.

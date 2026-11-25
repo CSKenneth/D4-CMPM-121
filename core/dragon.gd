@@ -8,6 +8,7 @@ var size: Vector2i
 var body: Array[Vector2i] = []  # head first
 var heading := Vector2i.RIGHT
 var _turns: Array[Vector2i] = []  # turns wait here until the next tick (Command)
+var _growth := 0
 
 
 func _init(grid_size: Vector2i, length := 4) -> void:
@@ -34,4 +35,11 @@ func tick() -> void:
 		heading = _turns.pop_front()
 	var head := body[0] + heading
 	body.push_front(Vector2i(posmod(head.x, size.x), posmod(head.y, size.y)))
-	body.pop_back()
+	if _growth > 0:
+		_growth -= 1
+	else:
+		body.pop_back()
+
+
+func grow(amount: int) -> void:
+	_growth += amount

@@ -85,6 +85,14 @@ def srgb(hex_code):
     channels = [int(hex_code.lstrip("#")[i : i + 2], 16) / 255 for i in (0, 2, 4)]
     return tuple(c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels) + (1.0,)
 
+FRUIT_COLORS = [
+    ("#e63946", "#ff9aa2"),
+    ("#7b2ff7", "#c9a8ff"),
+    ("#1e90ff", "#9fd3ff"),
+    ("#00b86b", "#a8f0c8"),
+    ("#ff7a00", "#ffd09a"),
+    ("#ff4fa3", "#ffc2e0"),
+]
 
 def make_materials():
     """One material per voxel character. Runs after reset_scene(), which would erase them."""
@@ -96,8 +104,9 @@ def make_materials():
         "s": pbr_material("Stone", "#9e9883", roughness=0.85),
         "t": pbr_material("Moss", "#6f8558", roughness=0.9),
         "w": pbr_material("Brick", "#6b4d3d", roughness=0.9),
+        "p": pbr_material("Fruit", "#7b2ff7", roughness=0.4, emission="#7b2ff7", strength=0.6),
+        "l": pbr_material("FruitSwirl", "#c9a8ff", roughness=0.4),
     })
-
 
 # --- Builders: each adds one piece's geometry to a bmesh ------------------------------
 # bmesh builds meshes from data alone, with no edit mode or selection involved; Blender
@@ -173,7 +182,29 @@ def build_tail(bm):
         ..o.
         """])
 
-
+def build_food(bm):
+    voxels(bm, ["""
+        .pp.
+        pppp
+        pppp
+        .pp.
+        """, """
+        pppp
+        plpp
+        pppl
+        pppp
+        """, """
+        p..p
+        .pp.
+        .pp.
+        p..p
+        """, """
+        p..p
+        .*..
+        ....
+        p..p
+        """])
+    
 def build_floor(bm):
     voxels(bm, ["""
         ssst
@@ -197,6 +228,7 @@ PIECES = {  # the dragon kit; the game finds each mesh by these names
     "straight": build_straight,
     "turn": build_turn,
     "tail": build_tail,
+    "food": build_food,
 }
 TILES = {  # one entry per kind in core/board.gd's TILES; a new kind is one builder and one line
     "floor": build_floor,
