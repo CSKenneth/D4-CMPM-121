@@ -9,9 +9,14 @@ const GROWTH := 2
 var board: Board
 var dragon: Dragon
 
+## food and growth
 var food: Vector2i
 var score := 0
 var rng := RandomNumberGenerator.new()
+
+## start and end
+var started := false
+var over := false
 
 
 func _init(grid_size: Vector2i, seed_value := 121) -> void:
@@ -25,8 +30,14 @@ func _init(grid_size: Vector2i, seed_value := 121) -> void:
 ## own body and with solid tiles (board.is_solid). Each needs the dragon and something
 ## else, which is why they go here rather than in Dragon.tick.
 func tick() -> void:
+	if not started or over:
+		return
 	dragon.tick()
-	if dragon.body[0] == food:
+	var head := dragon.body[0]
+	if board.is_solid(head) or dragon.body.slice(1).has(head):
+		over = true
+		return
+	if head == food:
 		score += 1
 		dragon.grow(GROWTH)
 		food = _free_cell()
@@ -39,3 +50,12 @@ func _free_cell() -> Vector2i:
 		if not board.is_solid(cell) and not dragon.body.has(cell):
 			open.append(cell)
 	return open[rng.randi_range(0, open.size() - 1)]
+
+
+func start() -> void:
+	started = true
+
+
+func steer(direction: Vector2i) -> void:
+	start()
+	dragon.turn(direction)
