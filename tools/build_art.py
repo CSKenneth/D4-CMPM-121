@@ -106,6 +106,16 @@ def make_materials():
         "w": pbr_material("Brick", "#6b4d3d", roughness=0.9),
         "p": pbr_material("Fruit", "#7b2ff7", roughness=0.4, emission="#7b2ff7", strength=0.6),
         "l": pbr_material("FruitSwirl", "#c9a8ff", roughness=0.4),
+
+        "k": pbr_material("Skin", "#f4c7a1", roughness=0.85),
+        "y": pbr_material("StrawHat", "#f2c94c", roughness=0.8),
+        "r": pbr_material("Red", "#d62828", roughness=0.6),
+        "d": pbr_material("Dark", "#25201f", roughness=0.9),
+        "b": pbr_material("Blue", "#2a5db0", roughness=0.7),
+        "m": pbr_material("Deck", "#a9784f", roughness=0.9),
+        "n": pbr_material("DeckDark", "#8c5f3b", roughness=0.9),
+        "c": pbr_material("Crate", "#7a4a28", roughness=0.9),
+        "g": pbr_material("CrateTrim", "#4b2e1a", roughness=0.9),
     })
 
 # --- Builders: each adds one piece's geometry to a bmesh ------------------------------
@@ -131,55 +141,65 @@ def voxels(bm, layers, below_ground=0):
                 for face in {f for v in cube["verts"] for f in v.link_faces}:
                     face.material_index = PALETTE[char]
 
-
 def build_head(bm):
     voxels(bm, ["""
-        .##.
-        ####
-        ####
-        .##.
+        .kk.
+        .kk.
+        .kk.
+        .kk.
+        """, """
+        dkkd
+        kkkk
+        kkkk
+        .kk.
+        """, """
+        yyyy
+        yyyy
+        yyyy
+        yyyy
         """, """
         ....
-        e##e
-        .##.
-        .##.
+        .rr.
+        .rr.
+        ....
         """, """
         ....
-        ....
-        *..*
+        .yy.
+        .yy.
         ....
         """])
+    
 
 
 def build_straight(bm):
     voxels(bm, ["""
-        .##.
-        .##.
-        .##.
-        .##.
-        """, """
-        ....
-        .*..
-        ....
-        .*..
-        """])
+        .kk.
+        .kk.
+        .kk.
+        .kk.
+        """] * 2)
 
 
 def build_turn(bm):
     voxels(bm, ["""
         ....
-        .###
-        .###
-        .##.
-        """])
+        .kkk
+        .kkk
+        .kk.
+        """] * 2)
 
 
 def build_tail(bm):
     voxels(bm, ["""
-        .##.
-        .##.
-        ..#.
-        ..o.
+        .kk.
+        bbbb
+        bbbb
+        .bb.
+        """, """
+        .kk.
+        rrrr
+        rrrr
+        .rr.
         """])
 
 def build_food(bm):
@@ -203,24 +223,39 @@ def build_food(bm):
         .*..
         ....
         p..p
+        """, """
+        p...
+        ....
+        ....
+        ...p
         """])
     
 def build_floor(bm):
     voxels(bm, ["""
-        ssst
-        stss
-        ssss
-        tsss
+        mmmn
+        mnmm
+        mmmm
+        nmmm
         """], below_ground=1)
 
 
 def build_wall(bm):
     voxels(bm, ["""
-        wwww
-        wwww
-        wwww
-        wwww
-        """] * 3)
+        cccc
+        cccc
+        cccc
+        cccc
+        """, """
+        gggg
+        gccg
+        gccg
+        gggg
+        """, """
+        cccc
+        cccc
+        cccc
+        cccc
+        """])
 
 
 PIECES = {  # the dragon kit; the game finds each mesh by these names
